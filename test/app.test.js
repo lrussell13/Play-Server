@@ -47,7 +47,7 @@ describe('GET /apps endpoint', () => {
             });
     });
 
-    it('should generate sorted Array', () => {
+    it('should generate sorted Array by Rating', () => {
         return request(app)
             .get('/apps')
             .expect(200)
@@ -57,7 +57,29 @@ describe('GET /apps endpoint', () => {
                 expect(res.body).to.be.an('array');
                 let isSorted = true;
                 for(let i = 0; i < res.body.length - 1; i++){
-                    isSorted = isSorted && res.body[i].Rating <= res.body[i + 1].Rating;
+                    if(res.body[i].Rating > res.body[i + 1].Rating){
+                        isSorted = false;
+                        break;
+                    }
+                }
+                expect(isSorted).to.be.true;
+            });
+    });
+
+    it('should generate sorted Array by App', () => {
+        return request(app)
+            .get('/apps')
+            .expect(200)
+            .query({sort: 'App'})
+            .expect('Content-Type', /json/)
+            .then(res => {
+                expect(res.body).to.be.an('array');
+                let isSorted = true;
+                for(let i = 0; i < res.body.length - 1; i++){
+                    if(res.body[i].App > res.body[i + 1].App){
+                        isSorted = false;
+                        break;
+                    }
                 }
             
                 expect(isSorted).to.be.true;
